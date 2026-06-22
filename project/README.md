@@ -1,4 +1,4 @@
-# 🚁 Smart Drone Battery Management System
+# 🚁 Smart Drone Battery Prediction Using Machine Learning
 ## Complete Setup & Run Guide
 
 ---
@@ -141,67 +141,3 @@ drain_per_metre = current_amps / (speed × battery_capacity_Ah × 3600 / 100)
 max_range = usable_battery_pct / drain_per_metre
 usable_battery = battery_now - safe_return_threshold (25%)
 ```
-
----
-
-## CONFIGURATION (edit ml_model.py)
-
-```python
-BATTERY_CAPACITY_MAH    = 5000   # Change to your battery (mAh)
-SAFE_RETURN_THRESHOLD   = 25.0   # % minimum to safely land
-CRITICAL_BATTERY_PCT    = 20.0   # % triggers full-screen alert
-DRONE_CRUISE_SPEED_MS   = 8.0    # m/s average speed
-```
-
----
-
-## RUNNING WITHOUT ARDUPILOT (Demo Mode)
-
-If ArduPilot is not installed, the system automatically switches to
-**Simulation Mode** — it generates realistic fake telemetry so you can
-develop and test the UI without hardware.
-
-You will see `SIMULATED` in the status bar at the top right.
-
----
-
-## API ENDPOINTS
-
-| Method | URL | Description |
-|--------|-----|-------------|
-| GET | `/` | Dashboard UI |
-| GET | `/api/telemetry` | Latest raw telemetry |
-| GET | `/api/predict` | ML predictions |
-| POST | `/api/preflight` | Pre-flight check `{"distance_m": 500}` |
-| GET | `/api/history?n=60` | Last 60 telemetry snapshots |
-| GET | `/api/model/metrics` | ML model accuracy |
-| POST | `/api/model/retrain` | Retrain the model |
-| GET | `/api/stream` | Server-Sent Events live stream |
-
----
-
-## TROUBLESHOOTING
-
-**"pymavlink not installed"**
-→ Run: `pip install pymavlink`
-
-**"Connection failed: [Errno 111]"**
-→ ArduPilot SITL is not running. Start it first (Step 3), OR the app will auto-switch to Simulation mode.
-
-**Dashboard not loading**
-→ Make sure Flask is running: `python app.py`
-→ Check http://localhost:5000 (not 8000 or 3000)
-
-**Model accuracy is low**
-→ Click "RETRAIN MODEL" in the warnings panel after flying for a few minutes.
-
----
-
-## FINAL YEAR PROJECT REPORT — KEY POINTS
-
-1. **MAVLink Protocol** — Industry standard for drone communication
-2. **Real-time telemetry** — 1 Hz polling, <1s latency
-3. **Online learning** — Model retrains every 50 samples with real data
-4. **Physics + ML hybrid** — Linear regression augments physics equations
-5. **Pre-flight safety** — Prevents takeoff when battery is insufficient
-6. **Critical alert system** — 25% warning + 20% full-screen critical alert
